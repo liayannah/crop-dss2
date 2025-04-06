@@ -29,7 +29,8 @@ if crop_file:
     # Input UI
     st.markdown("### 🔍 Yield Prediction Input")
     user_input = {col: st.number_input(col, value=float(crop_data[col].mean())) for col in crop_features}
-    input_df = sm.add_constant(pd.DataFrame([user_input]))
+    input_df = pd.DataFrame([user_input])
+    input_df = input_df.reindex(columns=model_yield.model.exog_names, fill_value=1)
     prediction = model_yield.predict(input_df)[0]
     st.success(f"📈 Predicted Crop Yield: {prediction:.2f} kg/ha")
 
@@ -48,7 +49,8 @@ if pest_file:
 
     st.markdown("### 🔍 Pest Incidence Prediction Input")
     pest_input = {col: st.number_input(col, value=float(pest_data[col].mean())) for col in pest_features}
-    pest_df = sm.add_constant(pd.DataFrame([pest_input]))
+    pest_df = pd.DataFrame([pest_input])
+    pest_df = pest_df.reindex(columns=model_pest.model.exog_names, fill_value=1)
     pest_pred = model_pest.predict(pest_df)[0]
     st.warning(f"🐛 Predicted Pest Incidence: {pest_pred:.2f} pests/m²")
 

@@ -26,15 +26,15 @@ if crop_file:
     crop_features = ['Fertilizer', 'Irrigation', 'Labor', 'SoilQuality', 'WeatherIndex']
     model_yield = train_model(crop_data, 'Yield', crop_features)
 
-    # Input UI
+    # Input for yield prediction
     st.markdown("### 🔍 Yield Prediction Input")
     user_input = {col: st.number_input(col, value=float(crop_data[col].mean())) for col in crop_features}
-    input_df = pd.DataFrame([user_input])
-    input_df = input_df.reindex(columns=model_yield.model.exog_names, fill_value=1)
-    prediction = model_yield.predict(input_df)[0]
-    st.success(f"📈 Predicted Crop Yield: {prediction:.2f} kg/ha")
+    input_yield = pd.DataFrame([user_input])
+    input_yield = input_yield.reindex(columns=model_yield.model.exog_names, fill_value=1)
+    yield_prediction = model_yield.predict(input_yield)[0]
+    st.success(f"📈 Predicted Crop Yield: {yield_prediction:.2f} kg/ha")
 
-    # Plot
+    # Yield vs Fertilizer Chart
     st.markdown("### 📈 Crop Yield vs Fertilizer")
     fig1 = px.scatter(crop_data, x="Fertilizer", y="Yield", trendline="ols", color_discrete_sequence=["green"])
     st.plotly_chart(fig1, use_container_width=True)
@@ -47,13 +47,15 @@ if pest_file:
     pest_features = ['Temperature', 'Humidity', 'CropStage', 'Pesticide', 'TimeSinceSpray']
     model_pest = train_model(pest_data, 'PestIncidence', pest_features)
 
+    # Input for pest prediction
     st.markdown("### 🔍 Pest Incidence Prediction Input")
     pest_input = {col: st.number_input(col, value=float(pest_data[col].mean())) for col in pest_features}
-    pest_df = pd.DataFrame([pest_input])
-    pest_df = pest_df.reindex(columns=model_pest.model.exog_names, fill_value=1)
-    pest_pred = model_pest.predict(pest_df)[0]
-    st.warning(f"🐛 Predicted Pest Incidence: {pest_pred:.2f} pests/m²")
+    input_pest = pd.DataFrame([pest_input])
+    input_pest = input_pest.reindex(columns=model_pest.model.exog_names, fill_value=1)
+    pest_prediction = model_pest.predict(input_pest)[0]
+    st.warning(f"🐛 Predicted Pest Incidence: {pest_prediction:.2f} pests/m²")
 
+    # Pest vs Humidity Chart
     st.markdown("### 📉 Pest Incidence vs Humidity")
     fig2 = px.scatter(pest_data, x="Humidity", y="PestIncidence", trendline="ols", color_discrete_sequence=["red"])
     st.plotly_chart(fig2, use_container_width=True)
